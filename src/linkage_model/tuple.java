@@ -15,6 +15,7 @@ public class tuple {
 
     @Override
     public String toString(){return String.format("[%.2f, %.2f]", this.x, this.y);}
+    public tuple subtract(tuple a){return new tuple(this.x - a.get_x(),this.y - a.get_y());}
     public double norm(){
         return Math.sqrt(this.x*this.x + this.y*this.y);
     }

@@ -11,6 +11,7 @@ public class linkage {
 
     private quad[] lengths;
     private ArrayList<tuple> tower_points;
+    private ArrayList<tuple> trace;
 
     public linkage(quad @NotNull [] lengths) throws IllegalArgumentException{
         if(lengths.length == 0)throw new IllegalArgumentException("Intractible Linkage");
@@ -130,17 +131,18 @@ public class linkage {
         return temp_vertices;
     }
 
-    public ArrayList<tuple> get_trace(int num_samples, tuple new_A0){
+    public ArrayList<tuple> compute_trace(int num_samples, tuple new_A0){
         ArrayList<tuple> trace = new ArrayList<tuple>();
         tuple temp_A1;
         double dx = (this.base_interval.get_y() - this.base_interval.get_x())/num_samples;
         for(int i = 0; i < num_samples; i++){
-            temp_A1 = new tuple(new_A0.get_x() + this.base_interval.get_x() + dx*i,
+            temp_A1 = new tuple(new_A0.get_x() - this.base_interval.get_x() - dx*i,
                                    new_A0.get_y());
             update_tower_points(new_A0, temp_A1);
             compute_tower_vertices();
             trace.add(getTerminalPoint());
         }
+        this.trace = trace;
         return trace;
     }
 
@@ -149,6 +151,7 @@ public class linkage {
     public tuple getA0(){return this.A0;}
     public tuple getA1(){return this.A1;}
     public quad[] getLengths(){return this.lengths;}
+    public ArrayList<tuple> get_trace(){return this.trace; }
 
     public tuple getTerminalPoint(){
         if(this.tower_points.size() > 0){ return this.tower_points.get(this.tower_points.size()-1);}
