@@ -1,8 +1,14 @@
+import custom_buttons.anchored_moveable_button;
+import custom_buttons.button;
+import custom_buttons.moveable_button;
+import custom_buttons.toggle_button;
 import linkage_model.linkage_operations;
 import linkage_model.quad;
 import linkage_model.tuple;
 import linkage_model.linkage;
 import linkage_model.genetic_simulation;
+import painters.linkage_painter;
+import painters.trace_painter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +39,9 @@ public class view extends JFrame {
     anchored_moveable_button ma1;
 
     genetic_simulation sim;
+    boolean sim_done = true;
+    linkage best_linkage;
+    Graphics2D g;
 
     //Needed to put the funky linkage code here
     //so that it can be updated outside of the init_window method.
@@ -63,7 +72,7 @@ public class view extends JFrame {
         a1.set_position(new tuple(300, 200));
 
         toggle_button sim_anchor = new toggle_button("");
-        sim_anchor.setPos(new tuple(3*getWidth()/9, 4*getHeight()/5));
+        sim_anchor.setPos(new tuple(6*getWidth()/9, 4*getHeight()/5));
         sim_anchor.setSize(new tuple(10, 10));
         genetic_algo_ui_buttons.add(sim_anchor);
 
@@ -119,6 +128,8 @@ public class view extends JFrame {
         //INIT A NEW FUNKY ONE
         load_funky_linkage();
 
+        this.g = (Graphics2D) getGraphics();
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e){
@@ -136,8 +147,11 @@ public class view extends JFrame {
 
                 interactive_toggle.pressed(e, mouseX, mouseY);
 
-                if(algo_start.getSelected()){
-                    sim = new genetic_simulation(user_trace, sim_anchor.getPos());
+                if(!algo_start.getSelected()){
+                    sim_done = false;
+                    try {
+                        sim = new genetic_simulation(user_trace, sim_anchor.getPos());
+                    }catch(Exception E){}
                 }
 
                 if(interactive_toggle.getSelected()) {
@@ -200,7 +214,7 @@ public class view extends JFrame {
         });
 
         this.t = new Timer(this.draw_fps, e -> {
-            Graphics2D g = (Graphics2D) getGraphics();
+            this.g = (Graphics2D) getGraphics();
             g.drawImage(background, 0, 0, getWidth(), getHeight(), Color.WHITE, null);
 
             interactive_toggle.draw(g, mouseX, mouseY);
@@ -215,7 +229,7 @@ public class view extends JFrame {
 
                     scissor.update_tower_points(a0.get_position(), a1.get_position());
                     scissor_painter.update_linkage(scissor);
-                    scissor_painter.paintlinkage(g);
+                    scissor_painter.paint_linkage(g);
                 }
                 if (star_toggle.getSelected()) {
                     this.ma0 = new anchored_moveable_button(a0, a1, star_T);
@@ -225,7 +239,7 @@ public class view extends JFrame {
 
                     star.update_tower_points(a0.get_position(), a1.get_position());
                     star_painter.update_linkage(star);
-                    star_painter.paintlinkage(g);
+                    star_painter.paint_linkage(g);
                 }
                 if(funky_toggle.getSelected()){
                     this.ma0 = new anchored_moveable_button(a0, a1, funky_T);
@@ -235,7 +249,7 @@ public class view extends JFrame {
 
                     funky.update_tower_points(a0.get_position(), a1.get_position());
                     funky_painter.update_linkage(funky);
-                    funky_painter.paintlinkage(g);
+                    funky_painter.paint_linkage(g);
                 }
                 for (button b : interactive_ui_buttons) {b.draw(g, mouseX, mouseY);}
 
@@ -247,14 +261,20 @@ public class view extends JFrame {
                 this.a0.draw(g, mouseX, mouseY);
                 this.a1.draw(g, mouseX, mouseY);
 
-            }else {
+            }else
+
+            {//where we run the genetic algorithm vis
                 for (button b : genetic_algo_ui_buttons) {b.draw(g, mouseX, mouseY);}
 
-                this.a0.draw(g, mouseX, mouseY);
                 if (trace_toggle.getSelected()) {
                     tp.update_trace(user_trace);
                     tp.paint_trace(g);
                 }
+                if(algo_start.getSelected() && user_trace.size()>10 && !sim_done){
+                    sim.run_simulation(g);sim_done = true;
+                }
+                this.a0.draw(g, mouseX, mouseY);
+
             }
 
         });
