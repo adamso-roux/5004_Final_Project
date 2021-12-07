@@ -227,7 +227,7 @@ public class view extends JFrame {
                     this.ma0.draw(g, mouseX, mouseY);
                     this.ma1.draw(g, mouseX, mouseY);
 
-                    scissor.update_tower_points(a0.get_position(), a1.get_position());
+                    scissor.update_anchors(a0.get_position(), a1.get_position());
                     scissor_painter.update_linkage(scissor);
                     scissor_painter.paint_linkage(g);
                 }
@@ -237,7 +237,7 @@ public class view extends JFrame {
                     this.ma0.draw(g, mouseX, mouseY);
                     this.ma1.draw(g, mouseX, mouseY);
 
-                    star.update_tower_points(a0.get_position(), a1.get_position());
+                    star.update_anchors(a0.get_position(), a1.get_position());
                     star_painter.update_linkage(star);
                     star_painter.paint_linkage(g);
                 }
@@ -247,7 +247,7 @@ public class view extends JFrame {
                     this.ma0.draw(g, mouseX, mouseY);
                     this.ma1.draw(g, mouseX, mouseY);
 
-                    funky.update_tower_points(a0.get_position(), a1.get_position());
+                    funky.update_anchors(a0.get_position(), a1.get_position());
                     funky_painter.update_linkage(funky);
                     funky_painter.paint_linkage(g);
                 }
@@ -271,9 +271,18 @@ public class view extends JFrame {
                     tp.paint_trace(g);
                 }
                 if(algo_start.getSelected() && user_trace.size()>10 && !sim_done){
-                    sim.run_simulation(g);sim_done = true;
+                    best_linkage = sim.run_simulation(g);
+                    sim_done = true;
                 }
                 this.a0.draw(g, mouseX, mouseY);
+
+                if(this.best_linkage != null){
+                    linkage_painter best_lp = new linkage_painter(this.best_linkage);
+                    best_lp.paint_linkage(g);
+                    trace_painter best_tp = new trace_painter(this.best_linkage.get_trace());
+                    best_tp.set_color(new Color(153, 255, 153));
+                    best_tp.paint_trace(g);
+                }
 
             }
 
