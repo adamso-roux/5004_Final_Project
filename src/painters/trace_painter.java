@@ -28,6 +28,9 @@ public class trace_painter extends JPanel {
     public void paint_trace(Graphics g){
         ((Graphics2D)g).setStroke(new BasicStroke(this.stroke));
         g.setColor(this.c);
+        if(trace.size() > 0) {
+            g.drawOval((int)(trace.get(0).get_x()-2.5), (int)(trace.get(0).get_y()-0.5), 5, 5);
+        }
         for (int i = 0; i < trace.size() - 1; i++) {
             tuple t0 = trace.get(i);
             tuple t1 = trace.get(i + 1);

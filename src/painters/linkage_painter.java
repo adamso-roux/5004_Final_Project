@@ -28,7 +28,7 @@ public class linkage_painter extends JPanel {
 
         g2d.setPaint(Color.blue);
 
-        l.update_tower_points(l.getA0(), l.getA1());
+        l.update_anchors(l.getA0(), l.getA1());
 
         if(l.getTower_points() == null){return;}
 
@@ -58,3 +58,4 @@ public class linkage_painter extends JPanel {
 
 
 }
+
