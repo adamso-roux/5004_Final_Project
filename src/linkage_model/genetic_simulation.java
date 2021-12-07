@@ -21,7 +21,7 @@ public class genetic_simulation {
         this.A0 = A0;
         this.num_generations = 10;
         this.init_pool_size = 1000;
-        this.num_carry_over = 50;
+        this.num_carry_over = 80;
 
         this.population = generate_random_pop(init_pool_size);
     }
@@ -73,6 +73,8 @@ public class genetic_simulation {
         ArrayList<tuple> temp_sub_sample = sub_sample_trace(temp_trace, step);
         int min_size = Math.min(target_sub_sample.size(), temp_sub_sample.size());
 
+        if(min_size < 10){return 1000;}
+
         double sum_of_loss = 0;
         for(int i = 0; i < min_size; i++){
             sum_of_loss += l2_norm(target_sub_sample.get(i), temp_sub_sample.get(i));
@@ -91,6 +93,7 @@ public class genetic_simulation {
         quad pq1 = parent_quads[1];
         quad pq2 = parent_quads[2];
         quad pq3 = parent_quads[3];
+        quad pq4 = parent_quads[4];
         for(int i = 0; i < num_children; i++){
             while(true) {
                 try {
@@ -98,7 +101,8 @@ public class genetic_simulation {
                     quad dq1 = pq1.constrained_subtract(quad.random_quad(dl));
                     quad dq2 = pq2.constrained_subtract(quad.random_quad(dl));
                     quad dq3 = pq3.constrained_subtract(quad.random_quad(dl));
-                    quad[] child_lens = {dq0, dq1, dq2, dq3};
+                    quad dq4 = pq4.constrained_subtract(quad.random_quad(dl));
+                    quad[] child_lens = {dq0, dq1, dq2, dq3, dq4};
                     linkage child = new linkage(child_lens);
                     children.add(child);
                     break;
@@ -109,7 +113,7 @@ public class genetic_simulation {
         return children;
     }
 
-    private ArrayList<linkage> generate_random_pop(int pop_size) {
+    public ArrayList<linkage> generate_random_pop(int pop_size) {
         ArrayList<linkage> new_children = new ArrayList<linkage>();
 
         for (int i = 0; i < pop_size; i++) {
@@ -128,7 +132,9 @@ public class genetic_simulation {
                             r.nextDouble() * d, r.nextDouble() * d);
                     quad quad4 = new quad(r.nextDouble() * d, r.nextDouble() * d,
                             r.nextDouble() * d, r.nextDouble() * d);
-                    quad[] new_funky_lengths = {quad0, quad1, quad2, quad4};
+                    quad quad5 = new quad(r.nextDouble() * d, r.nextDouble() * d,
+                            r.nextDouble() * d, r.nextDouble() * d);
+                    quad[] new_funky_lengths = {quad0, quad1, quad2, quad4, quad5};
                     child  = new linkage(new_funky_lengths);
                     break;
                 } catch (IllegalArgumentException iae) {
@@ -157,7 +163,7 @@ public class genetic_simulation {
         return new_pop;
     }
 
-    public void run_simulation(Graphics2D g){
+    public linkage run_simulation(Graphics2D g){
         System.out.println("Running Simulation:");
         System.out.print("Computing fitness for generation 0...");
         ArrayList<linkage> gen = get_best_of(this.population, 100);
@@ -178,7 +184,7 @@ public class genetic_simulation {
 
             System.out.print(String.format("Computing fitness for generation %d...", i));
             for(linkage l: gen){
-                children = mutate_linkage(l, 3, 3*t*t);
+                children = mutate_linkage(l, 5, 3*t*t);
                 for(linkage c: children){this.population.add(c);}
             }
 
@@ -195,6 +201,8 @@ public class genetic_simulation {
                 tp.paint_trace(g);
             }
         }
+
+        return gen.get(0);
     }
 
 }

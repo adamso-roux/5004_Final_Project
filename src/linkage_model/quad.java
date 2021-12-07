@@ -11,6 +11,7 @@ public class quad {
         this.l3 = l3;
     }
 
+    //balh
     public double get_l0(){return this.l0;}
     public double get_l1(){return this.l1;}
     public double get_l2(){return this.l2;}
@@ -32,18 +33,4 @@ public class quad {
     }
 }
 
-class quad_functional_repr {
-    tuple T;
-    tuple Tpp;
-    Function<Double, Double> F;
-    Function<Double, Double> Fp;
 
-    public quad_functional_repr(tuple T, tuple Tpp,
-                                Function<Double, Double> F,
-                                Function<Double, Double> Fp){
-        this.T = T;
-        this.Tpp = Tpp;
-        this.F = F;
-        this.Fp = Fp;
-    }
-}

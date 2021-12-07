@@ -27,7 +27,7 @@ public class linkage {
 
     }
 
-    public void update_tower_points(tuple A0, tuple A1){
+    public void update_anchors(tuple A0, tuple A1){
         this.A0 = A0;
         this.A1 = A1;
 
@@ -138,7 +138,7 @@ public class linkage {
         for(int i = 0; i < num_samples; i++){
             temp_A1 = new tuple(new_A0.get_x() - this.base_interval.get_x() - dx*i,
                                    new_A0.get_y());
-            update_tower_points(new_A0, temp_A1);
+            update_anchors(new_A0, temp_A1);
             compute_tower_vertices();
             trace.add(getTerminalPoint());
         }
