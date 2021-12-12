@@ -4,13 +4,24 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.Math;
 import java.util.ArrayList;
 
+/**
+ * A class which instantiates linkage objects given an array of quads,
+ * includes methods for computing the tower vertices, and traces.
+ */
 public class linkage {
+    //the first anchor point
     private tuple A0;
+    //the second anchor point
     private tuple A1;
+    //the interval in which the tower is well-defined
     private tuple base_interval;
 
+    //the array of quads which defines the linkage
     private quad[] lengths;
+    //the array of tuples which represents a drawn linkage object
     private ArrayList<tuple> tower_points;
+    //the array of tuples which stores the location of the
+    //terminal point of the linkage over the base-interval
     private ArrayList<tuple> trace;
 
     public linkage(quad @NotNull [] lengths) throws IllegalArgumentException{
@@ -18,15 +29,23 @@ public class linkage {
         this.lengths = lengths;
         this.base_interval = linkage_operations.get_t(this.lengths);
 
+        //if the base interval is null, then the linkage is intractible
         if(this.base_interval == null)throw new IllegalArgumentException("Intractible Linkage");
 
 
+        //setting the default parameters for the linkage
         this.A0 = new tuple(0.0, 0.0);
         this.A1 = new tuple(1, 0.0);
         this.tower_points = new ArrayList<tuple>();
 
     }
 
+    /**
+     * updates the anchor points for a linkage, necessary for
+     * defining the linkage structure in the geometry of the jframe:
+     * @param A0 the new first anchor point
+     * @param A1 the new second anchor point
+     */
     public void update_anchors(tuple A0, tuple A1){
         this.A0 = A0;
         this.A1 = A1;
@@ -37,6 +56,15 @@ public class linkage {
         }
     }
 
+    /**
+     * Returns the left-hand solution for the intersection of two circles
+     * with origins p0 and p1 and radii l0 l1 respectively.
+     * @param p0 the origin of the first circle
+     * @param p1 the origin of the second circle
+     * @param l0 the radius of the first circle
+     * @param l1 the radius of the second circle
+     * @return the intersection point between the two circles
+     */
     private tuple get_tri(tuple p0, tuple p1, double l0, double l1){
         if(p0 == null || p1 == null) return null;
         double x0 = p0.get_x();
@@ -61,6 +89,14 @@ public class linkage {
         return new tuple(x3, y3);
     }
 
+    /**
+     * Uses get_tri and some vector math to return the vertices of a quad given
+     * two anchor points p0 and p1
+     * @param p0 the first anchor point
+     * @param p1 the second anchor point
+     * @param L the quad defining the linkage
+     * @return the vertices of the quad
+     */
     private tuple[] get_quad(tuple p0, tuple p1, quad L){
         double l0, l1, l2, l3;
         l0 = L.get_l0(); l1 = L.get_l1(); l2 = L.get_l2(); l3 = L.get_l3();
@@ -83,6 +119,11 @@ public class linkage {
         return new tuple[]{p2, p3};
     }
 
+    /**
+     * Loops through all the quads in the linkage structure and constructs the
+     * tower of points defining the linkage via the anchor points
+     * @return an array of tuples representing the drawn tower
+     */
     private ArrayList<tuple> compute_tower_vertices(){
 
         ArrayList<tuple> temp_vertices = new ArrayList<>();
@@ -102,6 +143,8 @@ public class linkage {
         for(int i = 1; i < this.lengths.length; i++){
             if((p2 == null) || (p3 == null)){return null;}
 
+            //the LH solution needs to be swapped to RH when
+            //the index of the quad is even/odd
             if(i%2 == 1){
                 temp_quad = get_quad(p3, p2, this.lengths[i]);
 
@@ -131,6 +174,13 @@ public class linkage {
         return temp_vertices;
     }
 
+    /**
+     * Passes the linkage structure through its base interval and samples the
+     * position of the terminal point of the linkage.
+     * @param num_samples the number of samples to take
+     * @param new_A0 the location of the fixed anchor point
+     * @return the trace of the linkage
+     */
     public ArrayList<tuple> compute_trace(int num_samples, tuple new_A0){
         ArrayList<tuple> trace = new ArrayList<tuple>();
         tuple temp_A1;
@@ -146,6 +196,7 @@ public class linkage {
         return trace;
     }
 
+    //Some simple getters for the above class:
     public ArrayList<tuple> getTower_points(){return this.tower_points;}
     public tuple getBase_interval(){return this.base_interval;}
     public tuple getA0(){return this.A0;}

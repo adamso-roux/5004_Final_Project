@@ -4,10 +4,19 @@ import java.util.ArrayList;
 import java.util.function.Function;
 
 
-
+/**
+ * A set of functions allowing us to compute the base interval of a linkage structure
+ */
 public class linkage_operations {
+    //floating point error limit
     private static double tol = 1e-5;
 
+    /**
+     * The function relating the size of a quads base interval to its top interval:
+     * @param t the parameter controlling the size of the base interval
+     * @param L the quad to be mapped over
+     * @return the parameter controlling the size of the top interval
+     */
     private static double F_L(double t, quad L){
         double l1, l2, l3, l4;
         l1 = L.get_l0(); l2 = L.get_l1(); l3 = L.get_l2(); l4 = L.get_l3();
@@ -22,20 +31,48 @@ public class linkage_operations {
         return Math.sqrt(tp2);
     }
 
+    /**
+     * The inverse of F_L, we just need to flip the quad structure.
+     * @param t the parameter controlling the size of the top interval
+     * @param L the quad to be mapped over
+     * @return the parameter controlling the size of the base interval
+     */
     private static double F_inv_L(double t, quad L){
         return F_L(t, new quad(L.get_l3(), L.get_l2(), L.get_l1(), L.get_l0()));
     }
 
+    /**
+     * Returns the real-valued interval on which the quad is defined at its base
+     * @param L the quad to be mapped over
+     * @return a real-valued interval
+     */
     private static tuple get_down_interval(quad L){
         return new tuple(Math.abs(L.get_l0() - L.get_l1()), L.get_l0() + L.get_l1());
     }
 
+    /**
+     * Returns the real-valued interval on which the quad is defined at its top
+     * @param L the quad to be mapped over
+     * @return a real-valued interval
+     */
     private static tuple get_up_interval(quad L){
         return new tuple(Math.abs(L.get_l2() - L.get_l3()), L.get_l2() + L.get_l3());
     }
 
+    /**
+     * A helper function for computing the intersection of two sets of real numbers
+     * @param A a real-valued interval
+     * @param x the value to be checked
+     * @return 1 if x is in the interval A, else 0
+     */
     private static int x_in_interval(tuple A, double x){return (x>=A.get_x()) && (x<=A.get_y()) ? 1:0;}
 
+    /**
+     * Returns the intersection of two-sets of real numbers, EG: [0, 1] \cap [0.5, 1.5] = [0.5, 1]
+     * @param A the first interval
+     * @param B the second interval
+     * @return the intersection of A and B
+     */
     private static tuple get_intersection(tuple A, tuple B){
         //returns the intersection of two intervals on the real number line:
 
@@ -50,6 +87,11 @@ public class linkage_operations {
         return new tuple(lower, upper);
     }
 
+    /**
+     * Transforms a quad into its functional representation
+     * @param L0 the quad to be transformed
+     * @return a functional representation of a quad object
+     */
     private static quad_functional_repr create_quad_functor(quad L0){
         tuple T = get_down_interval(L0);
         tuple Tp = get_up_interval(L0);
@@ -59,6 +101,13 @@ public class linkage_operations {
         return new quad_functional_repr(T,Tp, F, Fp);
     }
 
+    /**
+     * Aligns two functional representations of quads into one functional representation
+     * @param qf0 the functional representation of the first quad
+     * @param qf1 the functional representation of the second quad
+     * @return a new functional representation
+     * @throws IllegalArgumentException in the event that there is no solution
+     */
     public static quad_functional_repr align_quad_functors(quad_functional_repr qf0,
                                                            quad_functional_repr qf1) throws IllegalArgumentException{
         tuple k = get_intersection(qf0.Tpp, qf1.T);
@@ -74,6 +123,10 @@ public class linkage_operations {
 
     }
 
+    /**
+     * A recursive helper function for aligning all the quads in a linkage object:
+     * @param attrs the functional representation of the entire linkage object
+     */
     public static void align_recur(ArrayList<quad_functional_repr> attrs){
         if(attrs.size()>1){
             quad_functional_repr attr0 = attrs.get(0);
@@ -85,6 +138,11 @@ public class linkage_operations {
         }
     }
 
+    /**
+     * Uses all of the above methods for computing the base interval of a quad
+     * @param lengths, the array of quads representing a linkage structure
+     * @return the base interval for the linkage structure.
+     */
     public static tuple get_t(quad[] lengths){
         ArrayList<quad_functional_repr> attrs = new ArrayList<quad_functional_repr>();
         for(quad L : lengths) attrs.add(create_quad_functor(L));
