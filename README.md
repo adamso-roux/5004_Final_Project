@@ -12,7 +12,7 @@ Below is a simple UML-like diagram depicting the meat of this repository:
 
 ### Concept Map and Objective Reflection:
 
-Below is what I submitted for the project design and objectives for this assignment: 
+Note that I did not include all required sections for the inital concept map, as I did not include a testing plan or a UML diagram. For the final submission however, I have included both ! Below is what I submitted for the project design and objectives for this assignment: 
 
 * #### Primary Goals:
 
