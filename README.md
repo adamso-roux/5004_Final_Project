@@ -1,5 +1,9 @@
 # An Interactive Genetic Algorithm For Linkage Structures:
 
+### For Dr. G:
+
+Hello! This repository should contain all necessary links and code for my final project. You'll find all the source code for this project in the ```/src/``` directory, and testing was done in the ```/test/``` directory. Begin in the directory ```/for_dr_g/```  which contains writeups for my my self-reflection, concept map, and a file containing a link to my code-walkthrough. I also included a file ```/for_dr_g/grade_template.md``` which summarizes the points I believe I attained towards my final grade with this project. 
+
 ## Introduction: 
 This code generates linkage structures which can be manipulated in real time. A custom button class allows users to move around constrained linkage structures, and draw the traces of various linkage structures over time. The user creates an intuition for how linkage structures draw traces: to each linkage structure, there is a continuous curve which will be traced out when the structure is articulated. The user is then given the option to predefine their own continuous trace to be used as the target curve for a genetic algorithm. The genetic algorithm mutates a population of linkage structures whose fitness is based on the 'distance' from the target trace. The user can then view the evolution of the algorithm in real time. 
 
