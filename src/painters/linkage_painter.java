@@ -8,18 +8,33 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 
+/**
+ * An object for painting linkages!
+ */
 public class linkage_painter extends JPanel {
 
+    // The linkage to be drawn
     private linkage l;
 
+    /**
+     * Instantiates this object with the provided linkage
+     * @param l, the linkage to be drawn
+     */
     public linkage_painter(linkage l) {
         super(); this.l = l;
     }
 
+    /**
+     * Updates the linkage object to be drawn
+     * @param l
+     */
     public void update_linkage(linkage l){this.l = l;}
 
+    /**
+     * Paints the linkage to the screen with the provided graphics object:
+     * @param g the graphics object used to paint the linkage
+     */
     public void paint_linkage(Graphics g) {
-
         super.paintComponent(g);
 
         if(l.getA0() == null || l.getA1() == null) return;

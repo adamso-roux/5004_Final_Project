@@ -7,13 +7,23 @@ import java.awt.*;
 
 import java.util.ArrayList;
 
+/**
+ * An object for painting traces!
+ */
 public class trace_painter extends JPanel {
 
+    //The trace to be drawn
     private ArrayList<tuple> trace;
+    //The color of the trace
     private Color c;
+    //The stroke size of the trace
     private float stroke;
-    private int display_length;
 
+
+    /**
+     * Instantiates this painter object with the trace to be drawn:
+     * @param trace
+     */
     public trace_painter(ArrayList<tuple> trace){
         this.trace = trace;
         this.c = Color.black;
@@ -21,10 +31,15 @@ public class trace_painter extends JPanel {
 
     }
 
+    //Setters and getters!
     public void update_trace(ArrayList<tuple> trace){this.trace = trace;}
-    public void set_stroke(float new_stroke){this.stroke = new_stroke;}
+    public void set_stroke(float new_stroke){this.stroke = new_stroke;}private int display_length;
     public void set_color(Color new_color){this.c = new_color;}
 
+    /**
+     * Paints the trace with the provided graphics object:
+     * @param g, the graphics object used to paint the trace
+     */
     public void paint_trace(Graphics g){
         ((Graphics2D)g).setStroke(new BasicStroke(this.stroke));
         g.setColor(this.c);
